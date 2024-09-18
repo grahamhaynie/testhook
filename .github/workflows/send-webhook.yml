@@ -25,12 +25,12 @@ jobs:
         run: |
           TOKEN='oJROD2DPveQuc9tOHKftXxO9IuCGNcmA'
           UUID=${{ env.UUID }}
-          STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/completed/get/$UUID"
+          STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/get/$UUID"
           while true; do
             RESPONSE=$(curl -s --request GET --url $STATUS_URL --header "Authorization: Bearer $TOKEN")
             echo "Response: $RESPONSE"  # Debug statement to print the response
-            SUCCESS=$(echo $RESPONSE | jq -r .success)
-            if [ "$SUCCESS" = "true" ]; then
+            COMPLETED=$(echo $RESPONSE | jq -r .success)
+            if [ "$COMPLETED" = "true" ]; then
               echo "Windmill script has completed successfully."
               break
             else
