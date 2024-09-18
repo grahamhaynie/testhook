@@ -10,21 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Webhook
+      - name: Start Windmill Script
         run: |
           TOKEN='oJROD2DPveQuc9tOHKftXxO9IuCGNcmA'
           BODY='{"test":"hello"}'
           URL='https://app.windmill.dev/api/w/demo/jobs/run/p/u/grahamhaynie/test'
           UUID=$(curl -s -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -X POST -d "$BODY" $URL)
 
-          URL="https://app.windmill.dev/api/w/demo/jobs_u/completed/get_result_maybe/$UUID"
+          echo "Windmill script started with UUID: $UUID"
+          echo "UUID=$UUID" >> $GITHUB_ENV
+
+      - name: Wait for Windmill Script Completion
+        id: wait-for-completion
+        run: |
+          UUID=${{ env.UUID }}
+          STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/status/$UUID"
           while true; do
-            curl -s -H "Authorization: Bearer $TOKEN" $URL -o res.json
-            COMPLETED=$(cat res.json | jq .completed)
-            if [ "$COMPLETED" = "true" ]; then
-              cat res.json | jq .result
+            STATUS=$(curl -s -H "Authorization: Bearer $TOKEN" $STATUS_URL | jq .status)
+            if [ "$STATUS" = "\"completed\"" ]; then
+              echo "Windmill script has completed."
               break
             else
-              sleep 1
+              echo "Waiting for Windmill script to complete..."
+              sleep 10
             fi
           done
