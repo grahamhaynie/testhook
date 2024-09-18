@@ -24,7 +24,7 @@ jobs:
         id: wait-for-completion
         run: |
           UUID=${{ env.UUID }}
-          STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/status/$UUID"
+          STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/completed/get/$UUID"
           while true; do
             STATUS=$(curl -s -H "Authorization: Bearer $TOKEN" $STATUS_URL | jq .status)
             if [ "$STATUS" = "\"completed\"" ]; then
