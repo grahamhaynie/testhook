@@ -13,7 +13,7 @@ jobs:
       - name: Send Webhook
         run: |
           TOKEN='oJROD2DPveQuc9tOHKftXxO9IuCGNcmA'
-          BODY='{"body":null}'
+          BODY='{"test":"hello"}'
           URL='https://app.windmill.dev/api/w/demo/jobs/run/p/u/grahamhaynie/test'
           UUID=$(curl -s -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -X POST -d "$BODY" $URL)
 
