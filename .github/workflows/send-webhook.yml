@@ -26,8 +26,8 @@ jobs:
           UUID=${{ env.UUID }}
           STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/completed/get/$UUID"
           while true; do
-            STATUS=$(curl -s -H "Authorization: Bearer $TOKEN" $STATUS_URL | jq .status)
-            if [ "$STATUS" = "\"completed\"" ]; then
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" $STATUS_URL)
+            if [ "$HTTP_STATUS" -eq 200 ]; then
               echo "Windmill script has completed."
               break
             else
