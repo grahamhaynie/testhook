@@ -1,0 +1,30 @@
+name: Send Webhook to Windmill
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  send-webhook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Webhook
+        run: |
+          TOKEN='oJROD2DPveQuc9tOHKftXxO9IuCGNcmA'
+          BODY='{"body":null}'
+          URL='https://app.windmill.dev/api/w/demo/jobs/run/p/u/grahamhaynie/test'
+          UUID=$(curl -s -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -X POST -d "$BODY" $URL)
+
+          URL="https://app.windmill.dev/api/w/demo/jobs_u/completed/get_result_maybe/$UUID"
+          while true; do
+            curl -s -H "Authorization: Bearer $TOKEN" $URL -o res.json
+            COMPLETED=$(cat res.json | jq .completed)
+            if [ "$COMPLETED" = "true" ]; then
+              cat res.json | jq .result
+              break
+            else
+              sleep 1
+            fi
+          done
