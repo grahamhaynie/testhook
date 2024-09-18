@@ -23,6 +23,7 @@ jobs:
       - name: Wait for Windmill Script Completion
         id: wait-for-completion
         run: |
+          TOKEN='oJROD2DPveQuc9tOHKftXxO9IuCGNcmA'
           UUID=${{ env.UUID }}
           STATUS_URL="https://app.windmill.dev/api/w/demo/jobs_u/completed/get/$UUID"
           while true; do
